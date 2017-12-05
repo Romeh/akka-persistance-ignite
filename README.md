@@ -1,3 +1,4 @@
+![Build Status](https://travis-ci.org/Romeh/akka-persistance-ignite.svg?branch=master)
 # akka-persistence-ignite (Java API)
 A _**journal**_ and _**snapshot**_  store plugin for akka-persistence using **_Apache Ignite_**.
 
