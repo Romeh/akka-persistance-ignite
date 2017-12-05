@@ -63,7 +63,7 @@ Contributions are more then welcomed:
 ---------------------
 Please free to jump and help will be highly appreciated 
 
-TODO :
+TODO (enhancement issues created for tracking): 
 ---------------------
 - [Persistence Query](https://doc.akka.io/docs/akka/current/scala/persistence-query.html) to BE IMPLEMENTED
 - More Detailed tests under failure conditions are still missing.
