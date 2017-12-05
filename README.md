@@ -17,9 +17,9 @@ Akka version :2.5.7+ , Ignite Version :2.3.0+
 Journal plugin 
 --------------
 - All operations required by the Akka Persistence journal plugin API are fully supported.
-- It use apache ignite partitioned cache with default number of backups to 1 , that cna be changed into reference.conf file.
+- It use apache ignite partitioned cache with default number of backups to 1 , that can be changed into reference.conf file.
  
-Snapshot store plugin (Akka version :2.5.7+ , Ignite Version :2.3.0+)
+Snapshot store plugin
 ---------------------
  - Implements the Akka Persistence [snapshot store plugin API](https://doc.akka.io/docs/akka/current/scala/persistence.html#snapshot-store-plugin-api).
  
