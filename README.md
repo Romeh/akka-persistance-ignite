@@ -1,6 +1,6 @@
 ![Build Status](https://travis-ci.org/Romeh/akka-persistance-ignite.svg?branch=master)
 # akka-persistence-ignite (Java API)
-A _**journal**_ and _**snapshot**_  store plugin for akka-persistence using **_Apache Ignite_**.
+A _**journal**_ and _**snapshot**_  store plugin for [Akka Persistence](https://doc.akka.io/docs/akka/2.5.4/java/persistence.html) using **_Apache Ignite_**.
 
 ![alt text](Final.png)
 
