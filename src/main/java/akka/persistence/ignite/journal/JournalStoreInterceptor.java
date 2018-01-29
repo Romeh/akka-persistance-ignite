@@ -1,11 +1,11 @@
 package akka.persistence.ignite.journal;
 
+import javax.cache.Cache;
+
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheInterceptorAdapter;
 import org.apache.ignite.resources.IgniteInstanceResource;
-
-import javax.cache.Cache;
 
 /**
  * journal cache interceptor to keep tracking the highest sequence of specific persistent entry every time there is an insert

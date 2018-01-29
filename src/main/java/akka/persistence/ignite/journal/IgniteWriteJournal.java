@@ -1,6 +1,27 @@
 package akka.persistence.ignite.journal;
 
 
+import java.io.NotSerializableException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import javax.cache.Cache;
+
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.QueryCursor;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.cache.query.SqlQuery;
+
+import com.typesafe.config.Config;
+
 import akka.actor.ActorSystem;
 import akka.dispatch.Futures;
 import akka.persistence.AtomicWrite;
@@ -11,23 +32,9 @@ import akka.persistence.ignite.extension.Store;
 import akka.persistence.journal.japi.AsyncWriteJournal;
 import akka.serialization.SerializationExtension;
 import akka.serialization.Serializer;
-import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.cache.query.QueryCursor;
-import org.apache.ignite.cache.query.SqlFieldsQuery;
-import org.apache.ignite.cache.query.SqlQuery;
 import scala.collection.JavaConverters;
 import scala.concurrent.Future;
-
-import javax.cache.Cache;
-import java.io.NotSerializableException;
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by MRomeh
@@ -35,7 +42,6 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 public class IgniteWriteJournal extends AsyncWriteJournal {
-
 
     private final Serializer serializer;
     private final Store<JournalItem> storage;
@@ -185,8 +191,6 @@ public class IgniteWriteJournal extends AsyncWriteJournal {
     private PersistentRepr convert(JournalItem item) {
         return (PersistentRepr) serializer.fromBinary(item.getPayload());
     }
-
-
 
 
 }

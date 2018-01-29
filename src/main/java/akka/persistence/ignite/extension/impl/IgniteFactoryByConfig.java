@@ -1,10 +1,8 @@
 package akka.persistence.ignite.extension.impl;
 
-import akka.actor.ActorSystem;
-import akka.actor.ExtendedActorSystem;
-import akka.persistence.ignite.common.IgniteConfigProvider;
-import akka.persistence.ignite.common.entities.IgniteProperties;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.function.Function;
+
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.BinaryConfiguration;
@@ -14,8 +12,11 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 
-import java.util.Arrays;
-import java.util.function.Function;
+import akka.actor.ActorSystem;
+import akka.actor.ExtendedActorSystem;
+import akka.persistence.ignite.common.IgniteConfigProvider;
+import akka.persistence.ignite.common.entities.IgniteProperties;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * the main class to start and configure ignite node part of akk extension

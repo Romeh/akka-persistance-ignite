@@ -1,9 +1,15 @@
 package akka.persistence.ignite.snapshot;
 
-import lombok.*;
+import java.io.Serializable;
+
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Created by MRomeh

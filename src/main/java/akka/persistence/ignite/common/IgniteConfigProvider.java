@@ -1,12 +1,14 @@
 package akka.persistence.ignite.common;
 
+import java.util.function.Function;
+
+import org.springframework.util.StringUtils;
+
+import com.typesafe.config.Config;
+
 import akka.actor.ActorSystem;
 import akka.persistence.ignite.common.entities.IgniteProperties;
 import akka.persistence.ignite.common.enums.PropertiesNames;
-import com.typesafe.config.Config;
-import org.springframework.util.StringUtils;
-
-import java.util.function.Function;
 
 /**
  * the ignite properties provider based into the configuration provided otherwise use the default values

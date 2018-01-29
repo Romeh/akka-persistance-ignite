@@ -1,7 +1,8 @@
 package akka.persistence.ignite.extension;
 
-import akka.actor.Extension;
 import org.apache.ignite.Ignite;
+
+import akka.actor.Extension;
 import scala.concurrent.ExecutionContextExecutor;
 
 /**

@@ -1,12 +1,21 @@
 package akka.persistence.ignite.extension;
 
-import akka.actor.*;
-import akka.persistence.ignite.extension.impl.IgniteFactoryByConfig;
-import lombok.*;
-import org.apache.ignite.Ignite;
-import scala.concurrent.ExecutionContextExecutor;
-
 import java.util.function.Function;
+
+import org.apache.ignite.Ignite;
+
+import akka.actor.AbstractExtensionId;
+import akka.actor.ExtendedActorSystem;
+import akka.actor.Extension;
+import akka.actor.ExtensionId;
+import akka.actor.ExtensionIdProvider;
+import akka.persistence.ignite.extension.impl.IgniteFactoryByConfig;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import scala.concurrent.ExecutionContextExecutor;
 
 /**
  * the provider for ignite akka extension to be used in journal and snapshot operations

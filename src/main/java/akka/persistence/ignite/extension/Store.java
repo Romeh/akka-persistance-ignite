@@ -1,16 +1,18 @@
 package akka.persistence.ignite.extension;
 
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+
+import javax.cache.CacheException;
+
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteClientDisconnectedException;
+
 import akka.actor.ActorSystem;
 import akka.dispatch.Futures;
 import lombok.Getter;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.IgniteClientDisconnectedException;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.Future;
-
-import javax.cache.CacheException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 
 
 /**

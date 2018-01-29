@@ -1,5 +1,22 @@
 package akka.persistence.ignite.snapshot;
 
+import java.io.NotSerializableException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+
+import javax.cache.Cache;
+
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.QueryCursor;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.cache.query.SqlQuery;
+
+import com.typesafe.config.Config;
+
 import akka.actor.ActorSystem;
 import akka.persistence.SelectedSnapshot;
 import akka.persistence.SnapshotMetadata;
@@ -10,22 +27,8 @@ import akka.persistence.serialization.Snapshot;
 import akka.persistence.snapshot.japi.SnapshotStore;
 import akka.serialization.SerializationExtension;
 import akka.serialization.Serializer;
-import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.cache.query.QueryCursor;
-import org.apache.ignite.cache.query.SqlFieldsQuery;
-import org.apache.ignite.cache.query.SqlQuery;
 import scala.concurrent.Future;
-
-import javax.cache.Cache;
-import java.io.NotSerializableException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * Created by MRomeh
@@ -33,7 +36,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class IgniteSnapshotStore extends SnapshotStore {
-
 
     private final Serializer serializer;
     private final Store<SnapshotItem> storage;
@@ -106,7 +108,6 @@ public class IgniteSnapshotStore extends SnapshotStore {
             if (log.isDebugEnabled()) {
                 log.debug("doDeleteAsync '{}' ({}; {})", persistenceId, criteria.minSequenceNr(), criteria.maxSequenceNr());
             }
-
             List<List<?>> seq = cache
                     .query(new SqlFieldsQuery("select sequenceNr from SnapshotItem where sequenceNr >= ? AND sequenceNr <= ? AND timestamp >= ? AND timestamp <= ? and persistenceId=?")
                             .setArgs(criteria.minSequenceNr(), criteria.maxSequenceNr(), criteria.minTimestamp(), criteria.maxTimestamp(), persistenceId))

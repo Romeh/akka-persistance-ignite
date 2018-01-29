@@ -1,12 +1,13 @@
 package akka.persistence.ignite.journal;
 
+import java.io.Serializable;
+
+import org.apache.ignite.cache.query.annotations.QuerySqlField;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.ignite.cache.query.annotations.QuerySqlField;
-
-import java.io.Serializable;
 
 /**
  * Created by MRomeh
