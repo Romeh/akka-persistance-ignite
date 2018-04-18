@@ -32,6 +32,17 @@ akka.persistence.journal.plugin = "akka.persistence.journal.ignite"
 akka.persistence.snapshot-store.plugin = "akka.persistence.snapshot.ignite"
 ````
 
+Maven dependency 
+````
+        <dependency>
+            <groupId>io.github.romeh</groupId>
+            <artifactId>akka-persistence-ignite</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+````
+
+it is published into nexus public repo : https://oss.sonatype.org/content/groups/public/
+
 Configure Ignite data grid properties , default configured on localhost. 
 ````buildoutcfg
 ignite {
