@@ -1,10 +1,9 @@
 package akka.persistence.ignite.journal;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
+import org.apache.ignite.binary.BinaryObjectException;
+import org.apache.ignite.binary.BinaryReader;
+import org.apache.ignite.binary.BinaryWriter;
+import org.apache.ignite.binary.Binarylizable;
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
 import lombok.AllArgsConstructor;
@@ -18,27 +17,24 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JournalItem implements Externalizable {
-    @QuerySqlField(index = true)
-    private long sequenceNr;
-    @QuerySqlField(index = true)
-    private String persistenceId;
-    private byte[] payload;
+public class JournalItem implements Binarylizable {
+	@QuerySqlField(index = true)
+	private long sequenceNr;
+	@QuerySqlField(index = true)
+	private String persistenceId;
+	private byte[] payload;
 
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeUTF(persistenceId);
-		out.writeLong(sequenceNr);
-		out.writeInt(payload.length);
-		out.write(payload);
+	public void writeBinary(BinaryWriter out) throws BinaryObjectException {
+		out.writeString("persistenceId", persistenceId);
+		out.writeLong("sequenceNr", sequenceNr);
+		out.writeByteArray("payload", payload);
 	}
 
 	@Override
-	public void readExternal(ObjectInput in) throws IOException {
-		persistenceId = in.readUTF();
-		sequenceNr = in.readLong();
-		payload = new byte[in.readInt()];
-		in.readFully(payload);
-
+	public void readBinary(BinaryReader in) throws BinaryObjectException {
+		persistenceId = in.readString("persistenceId");
+		sequenceNr = in.readLong("sequenceNr");
+		payload = in.readByteArray("payload");
 	}
 }
