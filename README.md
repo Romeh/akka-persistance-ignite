@@ -77,7 +77,7 @@ Please free to jump and help will be highly appreciated
 
 TODO (enhancement issues created for tracking): 
 ---------------------
-- [Persistence Query](https://doc.akka.io/docs/akka/current/scala/persistence-query.html) to BE IMPLEMENTED
+- [Persistence Query](https://doc.akka.io/docs/akka/current/scala/persistence-query.html) to be implemented but it cauld be not needed as we can use simplt Apache Ignite sql and text query capabilities 
 - More Detailed tests under failure conditions are still missing.
 - Performance testing policy needed to be defined and executed 
 - Adding HTTPS support 
