@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.romeh</groupId>
     <artifactId>akka-persistence-ignite</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <akka.version>2.5.7</akka.version>
-        <ignite.version>2.3.0</ignite.version>
+        <akka.version>2.5.18</akka.version>
+        <ignite.version>2.6.0</ignite.version>
         <slf4j.version>1.7.25</slf4j.version>
         <lombok.version>1.16.18</lombok.version>
         <scalatest.version>3.0.4</scalatest.version>

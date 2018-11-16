@@ -1,33 +1,47 @@
 package akka.persistence.ignite.snapshot;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Created by MRomeh
  * the snapshot cache value object
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
-public class SnapshotItem implements Serializable {
+public class SnapshotItem implements Externalizable {
     @QuerySqlField(index = true, descending = true)
     private long sequenceNr;
     @QuerySqlField(index = true)
     private String persistenceId;
-    // @QuerySqlField(index = true,orderedGroups={@QuerySqlField.Group(name="group", order=1,descending = true)})
     @QuerySqlField(index = true, descending = true)
     private long timestamp;
     private byte[] payload;
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeUTF(persistenceId);
+        out.writeLong(sequenceNr);
+        out.writeLong(timestamp);
+        out.writeInt(payload.length);
+        out.write(payload);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        persistenceId = in.readUTF();
+        sequenceNr = in.readLong();
+        timestamp = in.readLong();
+        payload = new byte[in.readInt()];
+        in.readFully(payload);
+    }
 }
