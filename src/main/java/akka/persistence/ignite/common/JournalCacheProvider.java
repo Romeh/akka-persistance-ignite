@@ -4,12 +4,15 @@ import java.util.function.BiFunction;
 
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.cache.QueryEntity;
+import org.apache.ignite.cache.QueryIndex;
 import org.apache.ignite.configuration.CacheConfiguration;
 
 import com.typesafe.config.Config;
 
 import akka.actor.ActorSystem;
 import akka.persistence.ignite.common.entities.JournalCaches;
+import akka.persistence.ignite.common.enums.FieldNames;
 import akka.persistence.ignite.common.enums.PropertiesNames;
 import akka.persistence.ignite.extension.IgniteExtension;
 import akka.persistence.ignite.extension.IgniteExtensionProvider;
@@ -20,7 +23,6 @@ import akka.persistence.ignite.journal.JournalStoreInterceptor;
  * Journal and sequence caches provider based into the provided ignite cache configuration
  */
 public class JournalCacheProvider implements BiFunction<Config, ActorSystem, JournalCaches> {
-
 
 
 	/**
@@ -53,12 +55,11 @@ public class JournalCacheProvider implements BiFunction<Config, ActorSystem, Jou
 			eventStore.setName(cachePrefix);
 			eventStore.setCacheMode(CacheMode.PARTITIONED);
 			eventStore.setReadFromBackup(true);
-			eventStore.setIndexedTypes(Long.class, JournalItem.class);
-			eventStore.setIndexedTypes(String.class, JournalItem.class);
+			eventStore.setQueryEntities(Collections.singletonList(createJournalBinaryQueryEntity()));
 			eventStore.setInterceptor(new JournalStoreInterceptor());
 
 			//sequence Number Tracking
-			final CacheConfiguration<String, Long> squenceNumberTrack = new CacheConfiguration();
+			final CacheConfiguration<String, Long> squenceNumberTrack = new CacheConfiguration<>();
 			squenceNumberTrack.setCopyOnRead(false);
 			if (cacheBackups > 0) {
 				squenceNumberTrack.setBackups(cacheBackups);
@@ -76,4 +77,21 @@ public class JournalCacheProvider implements BiFunction<Config, ActorSystem, Jou
 		}
 
 	}
+
+
+	private QueryEntity createJournalBinaryQueryEntity() {
+		QueryEntity queryEntity = new QueryEntity();
+		queryEntity.setValueType(JournalItem.class.getName());
+		queryEntity.setKeyType(Long.class.getName());
+		LinkedHashMap<String, String> fields = new LinkedHashMap<>();
+		fields.put(FieldNames.sequenceNr.name(), Long.class.getName());
+		fields.put(FieldNames.persistenceId.name(), String.class.getName());
+		queryEntity.setFields(fields);
+		queryEntity.setIndexes(Arrays.asList(new QueryIndex(FieldNames.sequenceNr.name()),
+				new QueryIndex(FieldNames.persistenceId.name())));
+		return queryEntity;
+
+	}
+
+
 }

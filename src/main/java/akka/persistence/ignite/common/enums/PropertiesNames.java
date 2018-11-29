@@ -21,10 +21,11 @@ public enum PropertiesNames {
     IGNITE_CONNECTOR_PORT("ignite.igniteConnectorPort"),
     IGNITE_SERVER_PORT_RANGE("ignite.igniteServerPortRange"),
     IGNITE_PERSISTANCE_FILE_PATH("ignite.ignitePersistenceFilePath"),
-    CACHE_PREFIX_PROPERTY ("cache-prefix"),
-    CACHE_BACKUPS ("cache-backups"),
-    CACHE_CREATED_ALREADY ("cachesAlreadyCreated"),
-    SEQUENCE_CACHE_NAME ("sequenceNumberTrack");
+    CACHE_PREFIX_PROPERTY("cache-prefix"),
+    CACHE_BACKUPS("cache-backups"),
+    CACHE_CREATED_ALREADY("cachesAlreadyCreated"),
+    SEQUENCE_CACHE_NAME("sequenceNumberTrack"),
+    IGNITE_DATA_NAME("Akka-Persistence-Journal-Ignite");
 
     @Getter
     private final String propertyName;

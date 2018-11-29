@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContextExecutor;
  */
 public interface IgniteExtension extends Extension {
 
-    ExecutionContextExecutor getDispatcher();
+	ExecutionContextExecutor getDispatcher();
 
-    Ignite getIgnite();
+	Ignite getIgnite();
 }

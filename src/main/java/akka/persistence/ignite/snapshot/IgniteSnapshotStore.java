@@ -1,5 +1,9 @@
 package akka.persistence.ignite.snapshot;
 
+import static akka.persistence.ignite.common.enums.FieldNames.payload;
+import static akka.persistence.ignite.common.enums.FieldNames.sequenceNr;
+import static akka.persistence.ignite.common.enums.FieldNames.timestamp;
+
 import java.io.NotSerializableException;
 import java.util.Collection;
 import java.util.List;
@@ -11,9 +15,11 @@ import java.util.stream.Collectors;
 import javax.cache.Cache;
 
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.binary.BinaryObject;
 import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.cache.query.SqlQuery;
+import org.jetbrains.annotations.Nullable;
 
 import com.typesafe.config.Config;
 
@@ -37,22 +43,22 @@ import scala.concurrent.Future;
 @Slf4j
 public class IgniteSnapshotStore extends SnapshotStore {
 
-    private final Serializer serializer;
-    private final Store<SnapshotItem> storage;
-    private final IgniteCache<Long, SnapshotItem> cache;
-    private final BiFunction<Config, ActorSystem, IgniteCache<Long, SnapshotItem>> snapshotCacheProvider =
-            new SnapshotCacheProvider();
+	private final Serializer serializer;
+	private final Store<SnapshotItem> storage;
+	private final IgniteCache<Long, SnapshotItem> cache;
+	private final BiFunction<Config, ActorSystem, IgniteCache<Long, SnapshotItem>> snapshotCacheProvider =
+			new SnapshotCacheProvider();
 
-    public IgniteSnapshotStore(Config config) throws NotSerializableException {
-        ActorSystem actorSystem = context().system();
-        storage = new Store<>(actorSystem);
-        serializer = SerializationExtension.get(actorSystem).serializerFor(Snapshot.class);
-        cache = snapshotCacheProvider.apply(config, actorSystem);
-    }
+	public IgniteSnapshotStore(Config config) throws NotSerializableException {
+		ActorSystem actorSystem = context().system();
+		storage = new Store<>(actorSystem);
+		serializer = SerializationExtension.get(actorSystem).serializerFor(Snapshot.class);
+		cache = snapshotCacheProvider.apply(config, actorSystem);
+	}
 
-    private static Set<Long> listsToSetLong(List<List<?>> list) {
-        return list.stream().flatMap(Collection::stream).filter(o -> o instanceof Long).map(o -> (Long) o).collect(Collectors.toSet());
-    }
+	private static Set<Long> listsToSetLong(List<List<?>> list) {
+		return list.stream().flatMap(Collection::stream).filter(o -> o instanceof Long).map(o -> (Long) o).collect(Collectors.toSet());
+	}
 
     @Override
     public Future<Optional<SelectedSnapshot>> doLoadAsync(String persistenceId, SnapshotSelectionCriteria criteria) {
@@ -79,57 +85,60 @@ public class IgniteSnapshotStore extends SnapshotStore {
         });
     }
 
-    @Override
-    public Future<Void> doSaveAsync(SnapshotMetadata metadata, Object snapshot) {
-        return storage.execute(metadata.persistenceId(), cache, (entityIdParam, cacheParam) -> {
-            if (log.isDebugEnabled()) {
-                log.debug("doSaveAsync '{}' ({})", metadata.persistenceId(), metadata.sequenceNr());
-            }
-            SnapshotItem item = convert(metadata, snapshot);
-            cache.put(item.getSequenceNr(), item);
-            return null;
-        });
-    }
+	@Override
+	public Future<Void> doSaveAsync(SnapshotMetadata metadata, Object snapshot) {
+		return storage.execute(metadata.persistenceId(), cache, (entityIdParam, cacheParam) -> {
+			if (log.isDebugEnabled()) {
+				log.debug("doSaveAsync '{}' ({})", metadata.persistenceId(), metadata.sequenceNr());
+			}
+			SnapshotItem item = convert(metadata, snapshot);
+			cache.put(item.getSequenceNr(), item);
+			return null;
+		});
+	}
 
-    @Override
-    public Future<Void> doDeleteAsync(SnapshotMetadata metadata) {
-        return storage.execute(metadata.persistenceId(), cache, (entityIdParam, cacheParam) -> {
-            if (log.isDebugEnabled()) {
-                log.debug("doDeleteAsync '{}' ({})", metadata.persistenceId(), metadata.sequenceNr());
-            }
-            cache.remove(metadata.sequenceNr());
-            return null;
-        });
-    }
+	@Override
+	public Future<Void> doDeleteAsync(SnapshotMetadata metadata) {
+		return storage.execute(metadata.persistenceId(), cache, (entityIdParam, cacheParam) -> {
+			if (log.isDebugEnabled()) {
+				log.debug("doDeleteAsync '{}' ({})", metadata.persistenceId(), metadata.sequenceNr());
+			}
+			cache.remove(metadata.sequenceNr());
+			return null;
+		});
+	}
 
-    @Override
-    public Future<Void> doDeleteAsync(String persistenceId, SnapshotSelectionCriteria criteria) {
-        return storage.execute(persistenceId, cache, (entityIdParam, cacheParam) -> {
-            if (log.isDebugEnabled()) {
-                log.debug("doDeleteAsync '{}' ({}; {})", persistenceId, criteria.minSequenceNr(), criteria.maxSequenceNr());
-            }
-            List<List<?>> seq = cache
-                    .query(new SqlFieldsQuery("select sequenceNr from SnapshotItem where sequenceNr >= ? AND sequenceNr <= ? AND timestamp >= ? AND timestamp <= ? and persistenceId=?")
-                            .setArgs(criteria.minSequenceNr(), criteria.maxSequenceNr(), criteria.minTimestamp(), criteria.maxTimestamp(), persistenceId))
-                    .getAll();
-            Set<Long> keys = listsToSetLong(seq);
+	@Override
+	public Future<Void> doDeleteAsync(String persistenceId, SnapshotSelectionCriteria criteria) {
+		return storage.execute(persistenceId, cache, (entityIdParam, cacheParam) -> asyncDelete(persistenceId, criteria));
+	}
 
-            if (log.isDebugEnabled()) {
-                log.debug("remove keys {}", keys);
-            }
-            cache.removeAll(keys);
-            return null;
-        });
-    }
+	@Nullable
+	private Void asyncDelete(String persistenceId, SnapshotSelectionCriteria criteria) {
+		if (log.isDebugEnabled()) {
+			log.debug("doDeleteAsync '{}' ({}; {})", persistenceId, criteria.minSequenceNr(), criteria.maxSequenceNr());
+		}
+		List<List<?>> seq = cache
+				.query(new SqlFieldsQuery("select sequenceNr from SnapshotItem where sequenceNr >= ? AND sequenceNr <= ? AND timestamp >= ? AND timestamp <= ? and persistenceId=?")
+						.setArgs(criteria.minSequenceNr(), criteria.maxSequenceNr(), criteria.minTimestamp(), criteria.maxTimestamp(), persistenceId))
+				.getAll();
+		Set<Long> keys = listsToSetLong(seq);
 
-    private SnapshotItem convert(SnapshotMetadata metadata, Object snapshot) {
-        return new SnapshotItem(metadata.sequenceNr(), metadata.persistenceId(), metadata.timestamp(), serializer.toBinary(new Snapshot(snapshot)));
-    }
+		if (log.isDebugEnabled()) {
+			log.debug("remove keys {}", keys);
+		}
+		cache.removeAll(keys);
+		return null;
+	}
 
-    private SelectedSnapshot convert(String persistenceId, SnapshotItem item) {
-        SnapshotMetadata metadata = new SnapshotMetadata(persistenceId, item.getSequenceNr(), item.getTimestamp());
-        Snapshot snapshot = (Snapshot) serializer.fromBinary(item.getPayload());
-        return SelectedSnapshot.create(metadata, snapshot.data());
-    }
+	private SnapshotItem convert(SnapshotMetadata metadata, Object snapshot) {
+		return new SnapshotItem(metadata.sequenceNr(), metadata.persistenceId(), metadata.timestamp(), serializer.toBinary(new Snapshot(snapshot)));
+	}
+
+	private SelectedSnapshot convert(String persistenceId, BinaryObject item) {
+		SnapshotMetadata metadata = new SnapshotMetadata(persistenceId, item.<Long>field(sequenceNr.name()), item.<Long>field(timestamp.name()));
+		Snapshot snapshot = (Snapshot) serializer.fromBinary(item.field(payload.name()));
+		return SelectedSnapshot.create(metadata, snapshot.data());
+	}
 
 }

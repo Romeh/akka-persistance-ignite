@@ -5,11 +5,15 @@ import java.util.function.BiFunction;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.cache.QueryEntity;
+import org.apache.ignite.cache.QueryIndex;
+import org.apache.ignite.cache.QueryIndexType;
 import org.apache.ignite.configuration.CacheConfiguration;
 
 import com.typesafe.config.Config;
 
 import akka.actor.ActorSystem;
+import akka.persistence.ignite.common.enums.FieldNames;
 import akka.persistence.ignite.common.enums.PropertiesNames;
 import akka.persistence.ignite.extension.IgniteExtension;
 import akka.persistence.ignite.extension.IgniteExtensionProvider;
@@ -36,7 +40,7 @@ public class SnapshotCacheProvider implements BiFunction<Config, ActorSystem, Ig
 		if (cachesExit) {
 			return extension.getIgnite().cache(cachePrefix + "_SNAPSHOT");
 		} else {
-			final CacheConfiguration<Long, SnapshotItem> eventStore = new CacheConfiguration();
+			final CacheConfiguration<Long, SnapshotItem> eventStore = new CacheConfiguration<>();
 			eventStore.setCopyOnRead(false);
 			if (cacheBackups > 0) {
 				eventStore.setBackups(cacheBackups);
@@ -51,6 +55,24 @@ public class SnapshotCacheProvider implements BiFunction<Config, ActorSystem, Ig
 			eventStore.setIndexedTypes(String.class, SnapshotItem.class);
 			return extension.getIgnite().getOrCreateCache(eventStore);
 		}
+
+	}
+
+
+	private QueryEntity createSnapshotBinaryQueryEntity() {
+		QueryEntity queryEntity = new QueryEntity();
+		queryEntity.setValueType(SnapshotItem.class.getName());
+		queryEntity.setKeyType(Long.class.getName());
+		LinkedHashMap<String, String> fields = new LinkedHashMap<>();
+		fields.put(FieldNames.sequenceNr.name(), Long.class.getName());
+		fields.put(FieldNames.persistenceId.name(), String.class.getName());
+		fields.put(FieldNames.timestamp.name(), Long.class.getName());
+		queryEntity.setFields(fields);
+		final QueryIndex sequenceNrIndex = new QueryIndex(FieldNames.sequenceNr.name(), QueryIndexType.SORTED, false);
+		final QueryIndex persistenceIdIndex = new QueryIndex(FieldNames.persistenceId.name());
+		final QueryIndex timestampIndex = new QueryIndex(FieldNames.timestamp.name(), QueryIndexType.SORTED, false);
+		queryEntity.setIndexes(Arrays.asList(sequenceNrIndex, persistenceIdIndex, timestampIndex));
+		return queryEntity;
 
 	}
 }

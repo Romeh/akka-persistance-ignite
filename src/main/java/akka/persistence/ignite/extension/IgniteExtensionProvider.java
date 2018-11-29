@@ -23,31 +23,31 @@ import scala.concurrent.ExecutionContextExecutor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IgniteExtensionProvider extends AbstractExtensionId<IgniteExtension> implements ExtensionIdProvider {
 
-    public static final IgniteExtensionProvider EXTENSION = new IgniteExtensionProvider();
-    @Setter
-    private Function<ExtendedActorSystem, Ignite> factory = new IgniteFactoryByConfig();
+	public static final IgniteExtensionProvider EXTENSION = new IgniteExtensionProvider();
+	@Setter
+	private Function<ExtendedActorSystem, Ignite> factory = new IgniteFactoryByConfig();
 
-    /**
-     * @return the ignite extension
-     */
-    @Override
-    public ExtensionId<? extends Extension> lookup() {
-        return EXTENSION;
-    }
+	/**
+	 * @return the ignite extension
+	 */
+	@Override
+	public ExtensionId<? extends Extension> lookup() {
+		return EXTENSION;
+	}
 
-    /**
-     * @param system akka actor system
-     * @return the created ignite extension
-     */
-    @Override
-    public IgniteExtension createExtension(ExtendedActorSystem system) {
-        return new SimpleIgniteExtension(system.dispatcher(), factory.apply(system));
-    }
+	/**
+	 * @param system akka actor system
+	 * @return the created ignite extension
+	 */
+	@Override
+	public IgniteExtension createExtension(ExtendedActorSystem system) {
+		return new SimpleIgniteExtension(system.dispatcher(), factory.apply(system));
+	}
 
-    @AllArgsConstructor
-    @Getter
-    private class SimpleIgniteExtension implements IgniteExtension {
-        private ExecutionContextExecutor dispatcher;
-        private Ignite ignite;
-    }
+	@AllArgsConstructor
+	@Getter
+	private class SimpleIgniteExtension implements IgniteExtension {
+		private ExecutionContextExecutor dispatcher;
+		private Ignite ignite;
+	}
 }
