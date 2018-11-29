@@ -35,9 +35,9 @@ public class IgniteFactoryByConfig implements Function<ExtendedActorSystem, Igni
 		final IgniteProperties properties = igniteConfigProvider.apply(system);
 		final IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
 		igniteConfiguration.setClientMode(properties.isClientNode());
-		igniteConfiguration.setWorkDirectory(FileSystems.getDefault().getPath(properties.getIgnitePersistenceFilePath()).toAbsolutePath().toString());
 		// durable file memory persistence
 		if (properties.isEnableFilePersistence()) {
+			igniteConfiguration.setWorkDirectory(FileSystems.getDefault().getPath(properties.getIgnitePersistenceFilePath()).toAbsolutePath().toString());
 			DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
 			dataStorageConfiguration.setStoragePath(properties.getIgnitePersistenceFilePath() + "/store");
 			dataStorageConfiguration.setWalArchivePath(properties.getIgnitePersistenceFilePath() + "/walArchive");
