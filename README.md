@@ -18,8 +18,8 @@ Journal plugin
 --------------
 - All operations required by the Akka Persistence journal plugin API are fully supported.
 - it support storing the tags of the events (event tagging)
-- It use Apache Ignite binary serialization for it is queries
-- Events serialization will based into the types serializers definition in your Akka configuration 
+- It use Apache Ignite binary serialization for its queries
+- Events serialization will be based into the types serializers definition in your Akka configuration 
 - It use apache ignite partitioned cache with default number of backups to 1 , that can be changed into reference.conf file.
  
 Snapshot store plugin
