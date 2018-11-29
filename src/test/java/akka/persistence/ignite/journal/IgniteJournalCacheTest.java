@@ -54,6 +54,8 @@ public class IgniteJournalCacheTest {
 	@Test
 	public void testPersistentActorWIthIgnite() throws Exception {
 		ActorRef actorRef = actorSystem.actorOf(Props.create(IgnitePersistentTestActor.class, "1"));
+		IgniteCache<Object, Object> cache = ignite.getOrCreateCache("akka-journal");
+		cache.clear();
 		actorRef.tell("+a", ActorRef.noSender());
 		actorRef.tell("+b", ActorRef.noSender());
 		actorRef.tell("+c", ActorRef.noSender());
@@ -61,8 +63,6 @@ public class IgniteJournalCacheTest {
 
 		Future<Object> future = Patterns.ask(actorRef, "-b", 1000);
 		Await.result(future, Duration.create(1, TimeUnit.SECONDS));
-
-		IgniteCache<Object, Object> cache = ignite.getOrCreateCache("akka-journal");
 		Assert.assertEquals(cache.size(), 4);
 
 		actorSystem.actorSelection("akka://test/user/**").tell("!!!", ActorRef.noSender());
