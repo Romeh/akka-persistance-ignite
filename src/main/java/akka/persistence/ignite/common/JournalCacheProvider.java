@@ -1,5 +1,10 @@
 package akka.persistence.ignite.common;
 
+import static akka.persistence.ignite.common.enums.PropertiesNames.IGNITE_DATA_NAME;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.function.BiFunction;
 
 import org.apache.ignite.cache.CacheAtomicityMode;
@@ -57,6 +62,7 @@ public class JournalCacheProvider implements BiFunction<Config, ActorSystem, Jou
 			eventStore.setReadFromBackup(true);
 			eventStore.setQueryEntities(Collections.singletonList(createJournalBinaryQueryEntity()));
 			eventStore.setInterceptor(new JournalStoreInterceptor());
+			eventStore.setDataRegionName(IGNITE_DATA_NAME.getPropertyName());
 
 			//sequence Number Tracking
 			final CacheConfiguration<String, Long> squenceNumberTrack = new CacheConfiguration<>();
@@ -70,6 +76,7 @@ public class JournalCacheProvider implements BiFunction<Config, ActorSystem, Jou
 			squenceNumberTrack.setName(PropertiesNames.SEQUENCE_CACHE_NAME.getPropertyName());
 			squenceNumberTrack.setCacheMode(CacheMode.PARTITIONED);
 			squenceNumberTrack.setReadFromBackup(true);
+			squenceNumberTrack.setDataRegionName(IGNITE_DATA_NAME.getPropertyName());
 			return JournalCaches.builder()
 					.journalCache(extension.getIgnite().getOrCreateCache(eventStore))
 					.sequenceCache(extension.getIgnite().getOrCreateCache(squenceNumberTrack))

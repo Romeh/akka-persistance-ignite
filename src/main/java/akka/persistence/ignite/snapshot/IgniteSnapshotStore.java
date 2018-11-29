@@ -60,30 +60,33 @@ public class IgniteSnapshotStore extends SnapshotStore {
 		return list.stream().flatMap(Collection::stream).filter(o -> o instanceof Long).map(o -> (Long) o).collect(Collectors.toSet());
 	}
 
-    @Override
-    public Future<Optional<SelectedSnapshot>> doLoadAsync(String persistenceId, SnapshotSelectionCriteria criteria) {
-        return storage.execute(persistenceId, cache, (entityIdParam, cacheParam) -> {
-            if (log.isDebugEnabled()) {
-                log.debug("doLoadAsync '{}' {} {}", persistenceId, criteria.minSequenceNr(), criteria.toString());
-            }
-            try (QueryCursor<Cache.Entry<Long, SnapshotItem>> query = cache
-                    .query(new SqlQuery<Long, SnapshotItem>(SnapshotItem.class, "sequenceNr >= ? AND sequenceNr <= ? AND timestamp >= ? AND timestamp <= ? and persistenceId=?")
-                            .setArgs(criteria.minSequenceNr(), criteria.maxSequenceNr(), criteria.minTimestamp(), criteria.maxTimestamp(), persistenceId))) {
+	@Override
+	public Future<Optional<SelectedSnapshot>> doLoadAsync(String persistenceId, SnapshotSelectionCriteria criteria) {
+		return storage.execute(persistenceId, cache, (entityIdParam, cacheParam) -> doLoadAsyncLogic(persistenceId, criteria));
+	}
 
-                List<Cache.Entry<Long, SnapshotItem>> iterator = query.getAll();
-                final Optional<Cache.Entry<Long, SnapshotItem>> max = iterator.stream().max((o1, o2) -> {
-                    if (o1.getValue().getSequenceNr() > o2.getValue().getSequenceNr()) {
-                        return 1;
-                    } else if (o1.getValue().getTimestamp() > o2.getValue().getTimestamp()) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                });
-                return Optional.ofNullable(max.isPresent() ? convert(persistenceId, max.get().getValue()) : null);
-            }
-        });
-    }
+	private Optional<SelectedSnapshot> doLoadAsyncLogic(String persistenceId, SnapshotSelectionCriteria criteria) {
+		if (log.isDebugEnabled()) {
+			log.debug("doLoadAsync '{}' {} {}", persistenceId, criteria.minSequenceNr(), criteria.toString());
+		}
+		final IgniteCache<Long, BinaryObject> snapShotCache = cache.withKeepBinary();
+		try (QueryCursor<Cache.Entry<Long, BinaryObject>> query = snapShotCache
+				.query(new SqlQuery<Long, BinaryObject>(SnapshotItem.class, "sequenceNr >= ? AND sequenceNr <= ? AND timestamp >= ? AND timestamp <= ? and persistenceId=?")
+						.setArgs(criteria.minSequenceNr(), criteria.maxSequenceNr(), criteria.minTimestamp(), criteria.maxTimestamp(), persistenceId))) {
+
+			List<Cache.Entry<Long, BinaryObject>> iterator = query.getAll();
+			final Optional<Cache.Entry<Long, BinaryObject>> max = iterator.stream().max((o1, o2) -> {
+				if (o1.getValue().<Long>field(sequenceNr.name()) > o2.getValue().<Long>field(sequenceNr.name())) {
+					return 1;
+				} else if (o1.getValue().<Long>field(timestamp.name()) > o2.getValue().<Long>field(timestamp.name())) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
+			return max.map(longSnapshotItemEntry -> convert(persistenceId, longSnapshotItemEntry.getValue()));
+		}
+	}
 
 	@Override
 	public Future<Void> doSaveAsync(SnapshotMetadata metadata, Object snapshot) {

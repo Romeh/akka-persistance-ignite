@@ -1,5 +1,10 @@
 package akka.persistence.ignite.common;
 
+import static akka.persistence.ignite.common.enums.PropertiesNames.IGNITE_DATA_NAME;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.function.BiFunction;
 
 import org.apache.ignite.IgniteCache;
@@ -51,8 +56,8 @@ public class SnapshotCacheProvider implements BiFunction<Config, ActorSystem, Ig
 			eventStore.setName(cachePrefix + "_SNAPSHOT");
 			eventStore.setCacheMode(CacheMode.PARTITIONED);
 			eventStore.setReadFromBackup(true);
-			eventStore.setIndexedTypes(Long.class, SnapshotItem.class);
-			eventStore.setIndexedTypes(String.class, SnapshotItem.class);
+			eventStore.setQueryEntities(Collections.singletonList(createSnapshotBinaryQueryEntity()));
+			eventStore.setDataRegionName(IGNITE_DATA_NAME.getPropertyName());
 			return extension.getIgnite().getOrCreateCache(eventStore);
 		}
 

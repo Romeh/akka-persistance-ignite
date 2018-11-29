@@ -1,14 +1,15 @@
 package akka.persistence.ignite.journal;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import akka.actor.ActorRef;
 import akka.persistence.AbstractPersistentActor;
 import akka.persistence.RecoveryCompleted;
 import akka.persistence.SnapshotOffer;
+import akka.persistence.journal.Tagged;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by MRomeh

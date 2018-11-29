@@ -1,5 +1,7 @@
 package akka.persistence.ignite.journal;
 
+import java.util.Collection;
+
 import org.apache.ignite.binary.BinaryObjectException;
 import org.apache.ignite.binary.BinaryReader;
 import org.apache.ignite.binary.BinaryWriter;
@@ -23,12 +25,16 @@ public class JournalItem implements Binarylizable {
 	@QuerySqlField(index = true)
 	private String persistenceId;
 	private byte[] payload;
+	private Collection<String> tags;
 
 	@Override
 	public void writeBinary(BinaryWriter out) throws BinaryObjectException {
 		out.writeString("persistenceId", persistenceId);
 		out.writeLong("sequenceNr", sequenceNr);
 		out.writeByteArray("payload", payload);
+		if (tags != null && !tags.isEmpty()) {
+			out.writeCollection("tags", tags);
+		}
 	}
 
 	@Override
@@ -36,5 +42,6 @@ public class JournalItem implements Binarylizable {
 		persistenceId = in.readString("persistenceId");
 		sequenceNr = in.readLong("sequenceNr");
 		payload = in.readByteArray("payload");
+		tags = in.readCollection("tags");
 	}
 }

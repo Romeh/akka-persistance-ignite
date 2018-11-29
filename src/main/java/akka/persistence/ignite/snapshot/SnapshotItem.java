@@ -40,5 +40,6 @@ public class SnapshotItem implements Binarylizable {
 		sequenceNr = in.readLong("sequenceNr");
 		timestamp = in.readLong("timestamp");
 		payload = in.readByteArray("payload");
+
 	}
 }
