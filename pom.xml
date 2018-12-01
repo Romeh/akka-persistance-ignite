@@ -5,7 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.romeh</groupId>
     <artifactId>akka-persistence-ignite</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
+
+    <name>akka-persistence-ignite</name>
+    <description>Ignite persistence journal plugin for akka persistence</description>
+    <url>https://github.com/Romeh/akka-persistance-ignite</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,7 +46,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/Romeh/github-maven-example</url>
+        <url>https://github.com/Romeh/akka-persistance-ignite</url>
         <connection>scm:git:git://github.com/Romeh/akka-persistance-ignite.git</connection>
         <developerConnection>scm:git:git@github.com:Romeh/akka-persistance-ignite.git</developerConnection>
     </scm>

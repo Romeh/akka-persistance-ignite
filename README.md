@@ -40,7 +40,7 @@ Maven dependency
         <dependency>
             <groupId>io.github.romeh</groupId>
             <artifactId>akka-persistence-ignite</artifactId>
-            <version>1.0.2</version>
+            <version>1.1.0</version>
         </dependency>
 ````
 
