@@ -28,6 +28,7 @@ import akka.persistence.SelectedSnapshot;
 import akka.persistence.SnapshotMetadata;
 import akka.persistence.SnapshotSelectionCriteria;
 import akka.persistence.ignite.common.SnapshotCacheProvider;
+import akka.persistence.ignite.common.entities.SnapshotlStarted;
 import akka.persistence.ignite.extension.Store;
 import akka.persistence.serialization.Snapshot;
 import akka.persistence.snapshot.japi.SnapshotStore;
@@ -54,6 +55,7 @@ public class IgniteSnapshotStore extends SnapshotStore {
 		storage = new Store<>(actorSystem);
 		serializer = SerializationExtension.get(actorSystem).serializerFor(Snapshot.class);
 		cache = snapshotCacheProvider.apply(config, actorSystem);
+		actorSystem.eventStream().publish(new SnapshotlStarted());
 	}
 
 	private static Set<Long> listsToSetLong(List<List<?>> list) {

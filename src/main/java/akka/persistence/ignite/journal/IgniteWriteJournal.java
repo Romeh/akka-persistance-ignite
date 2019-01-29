@@ -2,6 +2,7 @@ package akka.persistence.ignite.journal;
 
 
 import java.io.NotSerializableException;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import akka.persistence.PersistentImpl;
 import akka.persistence.PersistentRepr;
 import akka.persistence.ignite.common.JournalCacheProvider;
 import akka.persistence.ignite.common.entities.JournalCaches;
+import akka.persistence.ignite.common.entities.JournalStarted;
 import akka.persistence.ignite.common.enums.FieldNames;
 import akka.persistence.ignite.extension.Store;
 import akka.persistence.journal.Tagged;
@@ -66,6 +68,7 @@ public class IgniteWriteJournal extends AsyncWriteJournal {
 		JournalCaches journalCaches = journalCacheProvider.apply(config, actorSystem);
 		sequenceNumberTrack = journalCaches.getSequenceCache();
 		cache = journalCaches.getJournalCache();
+		actorSystem.eventStream().publish(new JournalStarted());
 	}
 
 	private static Stream<Long> listsToStreamLong(List<List<?>> list) {
@@ -204,9 +207,9 @@ public class IgniteWriteJournal extends AsyncWriteJournal {
 		if (p.payload() instanceof Tagged) {
 			Tagged taggedMsg = (Tagged) p.payload();
 			PersistentRepr persistentReprWithoutTag = new PersistentImpl(taggedMsg.payload(), p.sequenceNr(), p.persistenceId(), p.manifest(), p.deleted(), p.sender(), p.writerUuid());
-			return new JournalItem(persistentReprWithoutTag.sequenceNr(), persistentReprWithoutTag.persistenceId(), serializer.toBinary(persistentReprWithoutTag), JavaConverters.asJavaCollection(taggedMsg.tags()));
+			return new JournalItem(persistentReprWithoutTag.sequenceNr(), persistentReprWithoutTag.persistenceId(), serializer.toBinary(persistentReprWithoutTag), JavaConverters.asJavaCollection(taggedMsg.tags()), Instant.now().toEpochMilli());
 		} else {
-			return new JournalItem(p.sequenceNr(), p.persistenceId(), serializer.toBinary(p), null);
+			return new JournalItem(p.sequenceNr(), p.persistenceId(), serializer.toBinary(p), null, Instant.now().toEpochMilli());
 		}
 	}
 

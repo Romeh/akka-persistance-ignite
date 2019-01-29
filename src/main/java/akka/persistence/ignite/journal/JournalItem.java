@@ -26,6 +26,8 @@ public class JournalItem implements Binarylizable {
 	private String persistenceId;
 	private byte[] payload;
 	private Collection<String> tags;
+	@QuerySqlField(index = true)
+	private long timestamp;
 
 	@Override
 	public void writeBinary(BinaryWriter out) throws BinaryObjectException {
@@ -35,6 +37,7 @@ public class JournalItem implements Binarylizable {
 		if (tags != null && !tags.isEmpty()) {
 			out.writeCollection("tags", tags);
 		}
+		out.writeLong("timestamp", timestamp);
 	}
 
 	@Override
@@ -43,5 +46,6 @@ public class JournalItem implements Binarylizable {
 		sequenceNr = in.readLong("sequenceNr");
 		payload = in.readByteArray("payload");
 		tags = in.readCollection("tags");
+		timestamp = in.readLong("timestamp");
 	}
 }
