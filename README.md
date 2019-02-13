@@ -12,7 +12,7 @@ do analytical jobs over them despite it is advised to keep write nodes separate 
 Akka and Ignite used versions:
 --------------
 
-Akka version :2.5.18+ , Ignite Version :2.6.0+
+Akka version :2.5.18+ , Ignite Version :2.7.0+
 
 Journal plugin 
 --------------
@@ -40,7 +40,7 @@ Maven dependency
         <dependency>
             <groupId>io.github.romeh</groupId>
             <artifactId>akka-persistence-ignite</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
         </dependency>
 ````
 
@@ -80,8 +80,7 @@ Please free to jump and help will be highly appreciated
 
 TODO (enhancement issues created for tracking): 
 ---------------------
-- [Persistence Query](https://doc.akka.io/docs/akka/current/scala/persistence-query.html) to be implemented but it cauld be not needed as we can use the Apache Ignite sql and text query capabilities 
-- More Detailed tests under failure conditions are still missing.
+- [Persistence Query](https://doc.akka.io/docs/akka/current/scala/persistence-query.html) to be implemented but it could be not needed as we can use the Apache Ignite sql and text query capabilities 
 - Performance testing policy needed to be defined and executed 
 - Adding HTTPS support 
 - Performance test ignite client node vs server node connectivity
