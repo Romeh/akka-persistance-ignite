@@ -56,7 +56,7 @@ public class IgnitePersistentTestActor extends AbstractPersistentActor {
 				.match(String.class, c -> {
 					final String data = c;
 					if ("throw".equals(data)) {
-						throw new RuntimeException();
+						throw new RuntimeException("Test Exception");
 					} else {
 						persist(new Tagged(new TestEvent(data), Collections.singleton("testTag")), s -> {
 							putCmd(data);

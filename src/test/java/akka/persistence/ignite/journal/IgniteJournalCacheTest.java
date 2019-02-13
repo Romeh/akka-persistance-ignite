@@ -52,7 +52,7 @@ public class IgniteJournalCacheTest {
 	}
 
 	@Test
-	public void testPersistentActorWIthIgnite() throws Exception {
+	public void testPersistentActorWIthIgnite() {
 		ActorRef actorRef = actorSystem.actorOf(Props.create(IgnitePersistentTestActor.class, "1"));
 		IgniteCache<Object, Object> cache = ignite.getOrCreateCache("akka-journal");
 		cache.clear();
@@ -60,14 +60,17 @@ public class IgniteJournalCacheTest {
 		actorRef.tell("+b", ActorRef.noSender());
 		actorRef.tell("+c", ActorRef.noSender());
 		actorRef.tell("throw", ActorRef.noSender());
+		try {
+			Future<Object> future = Patterns.ask(actorRef, "-b", 1000);
+			Await.result(future, Duration.create(1, TimeUnit.SECONDS));
+			Assert.assertEquals(cache.size(), 4);
 
-		Future<Object> future = Patterns.ask(actorRef, "-b", 1000);
-		Await.result(future, Duration.create(1, TimeUnit.SECONDS));
-		Assert.assertEquals(cache.size(), 4);
+			actorSystem.actorSelection("akka://test/user/**").tell("!!!", ActorRef.noSender());
 
-		actorSystem.actorSelection("akka://test/user/**").tell("!!!", ActorRef.noSender());
-
-		Await.result(actorSystem.terminate(), Duration.create(1, TimeUnit.SECONDS));
+			Await.result(actorSystem.terminate(), Duration.create(1, TimeUnit.SECONDS));
+		} catch (Exception e) {
+			System.out.println("Exception has been thrown: " + e.getLocalizedMessage());
+		}
 	}
 
 
