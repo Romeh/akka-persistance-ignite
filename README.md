@@ -1,6 +1,6 @@
 # akka-persistence-ignite (Java API)
 ![Build Status](https://travis-ci.org/Romeh/akka-persistance-ignite.svg?branch=master)
-[![Maven Central](https://img.shields.io/maven-central/v/com.coxautodata/waimak-core_2.11.svg)](https://search.maven.org/search?a:akka-persistence-ignite)
+[![Maven Central](https://img.shields.io/maven-central/v/com.coxautodata/waimak-core_2.11.svg)](https://search.maven.org/search?q=g:io.github.romeh%20AND%20a:akka-persistence-ignite)
 
 A _**journal**_ and _**snapshot**_  store plugin for [Akka Persistence](https://doc.akka.io/docs/akka/2.5.4/java/persistence.html) using **_Apache Ignite_**.
 
