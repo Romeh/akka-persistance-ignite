@@ -55,14 +55,12 @@ public class IgniteWriteJournal extends AsyncWriteJournal {
 	private final IgniteCache<Long, JournalItem> cache;
 	private final IgniteCache<String, Long> sequenceNumberTrack;
 	private final BiFunction<Config, ActorSystem, JournalCaches> journalCacheProvider = new JournalCacheProvider();
-	private final ActorSystem actorSystem;
-
 	/**
 	 * @param config akka configuration
 	 * @throws NotSerializableException
 	 */
 	public IgniteWriteJournal(Config config) throws NotSerializableException {
-		actorSystem = context().system();
+		ActorSystem actorSystem = context().system();
 		serializer = SerializationExtension.get(actorSystem).serializerFor(PersistentRepr.class);
 		storage = new Store<>(actorSystem);
 		JournalCaches journalCaches = journalCacheProvider.apply(config, actorSystem);

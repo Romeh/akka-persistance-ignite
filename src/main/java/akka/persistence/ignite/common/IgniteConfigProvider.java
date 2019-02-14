@@ -26,34 +26,12 @@ public class IgniteConfigProvider implements Function<ActorSystem, IgnitePropert
 
 		final Config config = actorSystem.settings().config();
 
-		if (config.getInt(PropertiesNames.ASYNC_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setAsyncCallbackPoolSize(config
-					.getInt(PropertiesNames.ASYNC_THREADS.getPropertyName()));
-		}
-		if (config.getInt(PropertiesNames.DATA_STREAMER_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setDataStreamerThreadPoolSize(config
-					.getInt(PropertiesNames.DATA_STREAMER_THREADS.getPropertyName()));
-		}
-		if (config.getInt(PropertiesNames.MANAGEMENT_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setManagementThreadPoolSize(config
-					.getInt(PropertiesNames.MANAGEMENT_THREADS.getPropertyName()));
-		}
-		if (config.getInt(PropertiesNames.PUBLIC_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setPublicThreadPoolSize(config
-					.getInt(PropertiesNames.PUBLIC_THREADS.getPropertyName()));
-		}
-		if (config.getInt(PropertiesNames.SYSTEM_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setSystemThreadPoolSize(config
-					.getInt(PropertiesNames.SYSTEM_THREADS.getPropertyName()));
-		}
-		if (config.getInt(PropertiesNames.QUERY_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setQueryThreadPoolSize(config
-					.getInt(PropertiesNames.QUERY_THREADS.getPropertyName()));
-		}
-		if (config.getInt(PropertiesNames.REBALANCE_THREADS.getPropertyName()) != 0) {
-			igniteProperties.setRebalanceThreadPoolSize(config
-					.getInt(PropertiesNames.REBALANCE_THREADS.getPropertyName()));
-		}
+		setIgniteThreadPools(config);
+		setIgniteGeneralSettings(config);
+		return igniteProperties;
+	}
+
+	private void setIgniteGeneralSettings(Config config) {
 		if (config.getInt(PropertiesNames.METRICS_LOG_FREQUENCY.getPropertyName()) > 0) {
 			igniteProperties.setMetricsLogFrequency(config
 					.getInt(PropertiesNames.METRICS_LOG_FREQUENCY.getPropertyName()));
@@ -85,7 +63,37 @@ public class IgniteConfigProvider implements Function<ActorSystem, IgnitePropert
 			igniteProperties.setPeerClassLoadingEnabled(config
 					.getBoolean(PropertiesNames.PEER_CLASS_LOADING.getPropertyName()));
 		}
-		return igniteProperties;
+	}
+
+	private void setIgniteThreadPools(Config config) {
+		if (config.getInt(PropertiesNames.ASYNC_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setAsyncCallbackPoolSize(config
+					.getInt(PropertiesNames.ASYNC_THREADS.getPropertyName()));
+		}
+		if (config.getInt(PropertiesNames.DATA_STREAMER_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setDataStreamerThreadPoolSize(config
+					.getInt(PropertiesNames.DATA_STREAMER_THREADS.getPropertyName()));
+		}
+		if (config.getInt(PropertiesNames.MANAGEMENT_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setManagementThreadPoolSize(config
+					.getInt(PropertiesNames.MANAGEMENT_THREADS.getPropertyName()));
+		}
+		if (config.getInt(PropertiesNames.PUBLIC_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setPublicThreadPoolSize(config
+					.getInt(PropertiesNames.PUBLIC_THREADS.getPropertyName()));
+		}
+		if (config.getInt(PropertiesNames.SYSTEM_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setSystemThreadPoolSize(config
+					.getInt(PropertiesNames.SYSTEM_THREADS.getPropertyName()));
+		}
+		if (config.getInt(PropertiesNames.QUERY_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setQueryThreadPoolSize(config
+					.getInt(PropertiesNames.QUERY_THREADS.getPropertyName()));
+		}
+		if (config.getInt(PropertiesNames.REBALANCE_THREADS.getPropertyName()) != 0) {
+			igniteProperties.setRebalanceThreadPoolSize(config
+					.getInt(PropertiesNames.REBALANCE_THREADS.getPropertyName()));
+		}
 	}
 
 
