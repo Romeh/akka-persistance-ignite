@@ -59,7 +59,6 @@ public class IgniteJournalCacheTest {
 		actorRef.tell("+a", ActorRef.noSender());
 		actorRef.tell("+b", ActorRef.noSender());
 		actorRef.tell("+c", ActorRef.noSender());
-		actorRef.tell("throw", ActorRef.noSender());
 		try {
 			Future<Object> future = Patterns.ask(actorRef, "-b", 1000);
 			Await.result(future, Duration.create(1, TimeUnit.SECONDS));
