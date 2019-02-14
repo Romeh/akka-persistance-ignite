@@ -1,4 +1,7 @@
 # akka-persistence-ignite (Java API)
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5cb7dec4f09b44eca8677c5feebadcf1)](https://app.codacy.com/app/Romeh/akka-persistance-ignite?utm_source=github.com&utm_medium=referral&utm_content=Romeh/akka-persistance-ignite&utm_campaign=Badge_Grade_Dashboard)
+
 ![Build Status](https://travis-ci.org/Romeh/akka-persistance-ignite.svg?branch=master)
 ![Maven Central](https://img.shields.io/nexus/r/https/oss.sonatype.org/io.github.romeh/akka-persistence-ignite.svg?style=flat)
 
