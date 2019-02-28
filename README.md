@@ -1,4 +1,4 @@
-# akka-persistence-ignite (Java API)
+# akka-persistence-ignite (Java API)![Twitter Follow](https://img.shields.io/twitter/follow/mromeh.svg?style=social)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5cb7dec4f09b44eca8677c5feebadcf1)](https://app.codacy.com/app/Romeh/akka-persistance-ignite?utm_source=github.com&utm_medium=referral&utm_content=Romeh/akka-persistance-ignite&utm_campaign=Badge_Grade_Dashboard)
 
